@@ -1,0 +1,46 @@
+name: portable-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'c*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+permissions:
+    contents: write
+    
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-latest
+    env:
+      targetZip: slicer-portable-${{ github.ref_name }}.zip
+    steps:
+      - uses: actions/checkout@v4
+
+      # Slicer-5.6.2-win-amd64.exe
+      - name: installer
+        shell: cmd
+        run: |
+          curl https://slicer-packages.kitware.com/api/v1/item/660fb6c930e435b0e3560453/download -L --output installer.exe &&^
+          7z x installer.exe -o"installation" -y &&^
+          cd installation &&^
+          rmdir /q /s "$PLUGINSDIR" &&^
+          dir
+          
+      - shell: cmd
+        run: xcopy /H /Y /C "Slicer.exe.Portable.cmd" "installation"
+          
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "installation"
+          filename: "${{ env.targetZip }}"
+          
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "installation/${{ env.targetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
