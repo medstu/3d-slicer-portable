@@ -25,6 +25,7 @@ jobs:
           curl https://slicer-packages.kitware.com/api/v1/item/660fb6c930e435b0e3560453/download -L --output installer.exe &&^
           7z x installer.exe -o"installation" -y &&^
           cd installation &&^
+          del /q Uninstall.exe.nsis &&^
           rmdir /q /s "$PLUGINSDIR" &&^
           dir
           
