@@ -22,7 +22,7 @@ jobs:
       - name: installer
         shell: cmd
         run: |
-          curl https://slicer-packages.kitware.com/api/v1/item/660fb6c930e435b0e3560453/download -L --output installer.exe &&^
+          curl https://slicer-packages.kitware.com/api/v1/item/67c53d1129825655577d0b13/download -L --output installer.exe &&^
           7z x installer.exe -o"installation" -y &&^
           cd installation &&^
           del /q Uninstall.exe.nsis &&^
